@@ -1,89 +1,48 @@
+<!-- Item Added Message -->
+<div *ngIf="showItemAdded" class="item-added-message">
+  {{ itemAddedMessage }}
+</div>
+<!-- User Info Block -->
+<div *ngIf="user" class="mx-auto mb-4 p-3 rounded shadow-sm" style="max-width: 400px; background: linear-gradient(90deg, #2563eb 0%, #1e293b 100%); color: #fff;">
+  <div class="d-flex align-items-center mb-2">
+    <i class="bi bi-person-circle fs-2 me-2" style="color: #fff;"></i>
+    <div>
+      <span class="fw-bold fs-5">Welcome,</span>
+      <span class="fw-bold fs-5 text-capitalize">{{ user.name }}</span>
+    </div>
+  </div>
+  <div class="row ms-1">
+    <div class="col-12 col-md-6 mb-1">
+      <span class="text-light small">User ID:</span> <span class="fw-semibold">{{ user.id }}</span>
+    </div>
+    <div class="col-12 col-md-6 mb-1">
+      <span class="text-light small">Mobile:</span> <span class="fw-semibold">{{ user.mobile }}</span>
+    </div>
+  </div>
+</div>
+
 <!-- Menu Section -->
 <div class="menu-container">
-  <!-- Starters -->
-  <div class="menu-section">
-    <h2>Starters</h2>
-    <div *ngFor="let item of starters" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-  <i class="bi bi-plus"></i>
-</button>
-      </span>
+  <ng-container *ngFor="let row of getCategoryRows(categoryOrder, 3)">
+    <div class="menu-row">
+      <ng-container *ngFor="let cat of row">
+        <div class="menu-section" *ngIf="cat">
+          <h2>{{ cat.name }}</h2>
+          <div *ngFor="let item of cat.items" class="menu-item">
+            <span>{{ item.name }}</span>
+            <span>
+              ₹{{ item.price }}
+              <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2"
+                      title="Add to cart" (click)="addToCart(item)">
+                <i class="bi bi-plus"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+        <div class="menu-section" *ngIf="!cat"></div>
+      </ng-container>
     </div>
-  </div>
-
-  <!-- Indian Breads -->
-  <div class="menu-section">
-    <h2>Indian Breads</h2>
-    <div *ngFor="let item of breads" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-          <i class="bi bi-plus"></i>
-        </button>
-      </span>
-    </div>
-  </div>
-
-  <!-- Main Course -->
-  <div class="menu-section">
-    <h2>Main Course</h2>
-    <div *ngFor="let item of mainCourse" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-          <i class="bi bi-plus"></i>
-        </button>
-      </span>
-    </div>
-  </div>
-
-  <!-- Rice & Noodles -->
-  <div class="menu-section">
-    <h2>Rice & Noodles</h2>
-    <div *ngFor="let item of riceNoodles" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-          <i class="bi bi-plus"></i>
-        </button>
-      </span>
-    </div>
-  </div>
-
-  <!-- Desserts -->
-  <div class="menu-section">
-    <h2>Desserts</h2>
-    <div *ngFor="let item of desserts" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-  <i class="bi bi-plus"></i>
-</button>
-      </span>
-    </div>
-  </div>
-
-  <!-- Beverages -->
-  <div class="menu-section">
-    <h2>Beverages</h2>
-    <div *ngFor="let item of beverages" class="menu-item">
-      <span>{{ item.name }}</span>
-      <span>
-        ₹{{ item.price }}
-        <button type="button" class="btn btn-sm btn-outline-secondary add-to-cart-icon p-0 px-2" title="Add to cart" (click)="addToCart(item)">
-  <i class="bi bi-plus"></i>
-</button>
-      </span>
-    </div>
-  </div>
+  </ng-container>
 </div>
 
 <!-- Bottom Navigation (Mobile Only) -->

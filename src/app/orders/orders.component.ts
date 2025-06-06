@@ -11,11 +11,18 @@ export class OrdersComponent implements OnInit {
   orders: any[] = [];
   loading = true;
   error = '';
+  user: any = null;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+     const userData = localStorage.getItem('user');
+    if (userData) {
+      this.user = JSON.parse(userData);
+      console.log(this.user.id)   
+    }
     this.fetchOrders();
+    
   }
 
   fetchOrders(): void {
@@ -37,7 +44,7 @@ export class OrdersComponent implements OnInit {
   }
 
   cancelOrder(orderId: number): void {
-    this.http.post(`http://localhost:5000/orders/${orderId}/cansel`, {}).subscribe({
+    this.http.post(`http://localhost:5000/orders/cancel/${orderId}`, {}).subscribe({
       next: () => {
         // Refresh orders after cancellation
         this.fetchOrders();

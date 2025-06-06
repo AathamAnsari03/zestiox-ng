@@ -18,7 +18,8 @@ export class LoginComponent {
       next: (res: any) => {
         this.success = 'Login successful!';
         this.error = '';
-        // Save user info or token as needed
+        // Save user info to localStorage
+        localStorage.setItem('user', JSON.stringify(res.user));
         // Example: Redirect to menu after 1 second
         setTimeout(() => {
           window.location.href = '/menu';
