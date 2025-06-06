@@ -14,33 +14,41 @@ interface MenuItem {
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+  categoryOrder: { id: number, name: string, items: MenuItem[] }[] = [];
+  menuData: { [key: string]: MenuItem[] } = {};
   user: any = null;
-  starters: MenuItem[] = [];
-  breads: MenuItem[] = [];
-  mainCourse: MenuItem[] = [];
-  riceNoodles: MenuItem[] = [];
-  desserts: MenuItem[] = [];
-  beverages: MenuItem[] = [];
+
+  // Cart count
   cartCount = 0;
+
+
+  // Message for item added
+  itemAddedMessage = '';
+  showItemAdded = false;
+  itemAddedTimeout: any;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // Load user info from localStorage
+    // Load user info from localStorage FIRST
     const userData = localStorage.getItem('user');
     if (userData) {
       this.user = JSON.parse(userData); // Now you can use this.user.id, this.user.name, etc.
       console.log(this.user.id); // Log user id for debugging
     }
-    // Load menu data from assets/menu.json
-    this.http.get<any>('assets/menu.json').subscribe(data => {
-      this.starters = data['Starters'] || [];
-      this.breads = data['Indian Breads'] || [];
-      this.mainCourse = data['Main Course'] || [];
-      this.riceNoodles = data['Rice & Biryani'] || [];
-      this.desserts = data['Desserts'] || [];
-      this.beverages = data['Beverages'] || [];
+    // Now fetch menu items
+    this.http.get<any>(`${environment.apiUrl}/menu-items`).subscribe(data => {
+      console.log('Menu API response:', data); // Debug log
+      // Try to assign correctly based on response structure
+      if (Array.isArray(data)) {
+        this.categoryOrder = data;
+      } else if (data && Array.isArray(data.categories)) {
+        this.categoryOrder = data.categories;
+      } else {
+        this.categoryOrder = [];
+      }
     });
+    // Now fetch cart count (user is set)
     this.getCartCount();
   }
 
@@ -52,7 +60,16 @@ export class MenuComponent implements OnInit {
     };
     this.http.post<any>(`${environment.apiUrl}/cart/add`, payload).subscribe({
       next: response => {
-        this.getCartCount();
+        this.getCartCount(); // Fetch the real cart count from backend after adding
+        // Show item added message
+        this.itemAddedMessage = `${item.name} added`;
+        this.showItemAdded = true;
+        if (this.itemAddedTimeout) {
+          clearTimeout(this.itemAddedTimeout);
+        }
+        this.itemAddedTimeout = setTimeout(() => {
+          this.showItemAdded = false;
+        }, 1500);
       },
       error: (err: any) => {
         alert('Failed to add to cart. Please try again.');
@@ -69,5 +86,27 @@ export class MenuComponent implements OnInit {
         this.cartCount = 0;
       }
     });
+  }
+
+  // Helper to split categories into rows of n
+  getCategoryRows(categories: any[], perRow: number): any[][] {
+    const rows = [];
+    for (let i = 0; i < categories.length; i += perRow) {
+      const row = categories.slice(i, i + perRow);
+      while (row.length < perRow) {
+        row.push(null); // pad with nulls for alignment
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  // Helper to split categories into columns for vertical fill (column-major order)
+  getCategoryColumns(categories: any[], perCol: number): any[][] {
+    const columns: any[][] = Array.from({ length: perCol }, () => []);
+    categories.forEach((cat, idx) => {
+      columns[idx % perCol].push(cat);
+    });
+    return columns;
   }
 }
