@@ -29,7 +29,9 @@ export class MenuComponent implements OnInit {
     // Load user info from localStorage
     const userData = localStorage.getItem('user');
     if (userData) {
-      this.user = JSON.parse(userData);
+      this.user = JSON.parse(userData); // Now you can use this.user.id, this.user.name, etc.
+      console.log(this.user.id); // Log user id for debugging
+  }
     }
     // Load menu data from assets/menu.json
     this.http.get<any>('assets/menu.json').subscribe(data => {
