@@ -27,7 +27,7 @@ export class OrdersComponent implements OnInit {
 
   fetchOrders(): void {
     this.loading = true;
-    this.http.get<any[]>('http://localhost:5000/orders/1').subscribe({
+    this.http.get<any[]>(`http://localhost:5000/orders/${this.user.id}`).subscribe({
       next: (data) => {
         this.orders = data;
         this.loading = false;
