@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent {
-
+  get isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
 }

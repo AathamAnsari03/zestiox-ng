@@ -40,4 +40,9 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+
+  logout(): void {
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  }
 }
