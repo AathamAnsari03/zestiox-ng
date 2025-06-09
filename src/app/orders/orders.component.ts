@@ -1,6 +1,8 @@
 // ...existing imports...
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-orders',
@@ -11,16 +13,23 @@ export class OrdersComponent implements OnInit {
   orders: any[] = [];
   loading = true;
   error = '';
+  user: any = null;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+     const userData = localStorage.getItem('user');
+    if (userData) {
+      this.user = JSON.parse(userData);
+      console.log(this.user.id)   
+    }
     this.fetchOrders();
+    
   }
 
   fetchOrders(): void {
     this.loading = true;
-    this.http.get<any[]>('http://localhost:5000/orders/1').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/orders/${this.user.id}`).subscribe({
       next: (data) => {
         this.orders = data;
         this.loading = false;
@@ -37,7 +46,7 @@ export class OrdersComponent implements OnInit {
   }
 
   cancelOrder(orderId: number): void {
-    this.http.post(`http://localhost:5000/orders/${orderId}/cansel`, {}).subscribe({
+    this.http.post(`${environment.apiUrl}/orders/cancel/${orderId}`, {}).subscribe({
       next: () => {
         // Refresh orders after cancellation
         this.fetchOrders();

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-registration',
@@ -58,7 +59,7 @@ export class RegistrationComponent implements OnInit {
     this.apiValidationDetails = null;
     if (this.registerForm.invalid) return;
     const { name, mobile, password } = this.registerForm.value;
-    this.http.post<any>('/register', { name, mobile, password }).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/register`, { name, mobile, password }).subscribe({
       next: (res) => {
         this.registrationSuccess = true;
         setTimeout(() => this.router.navigate(['/login']), 1500);

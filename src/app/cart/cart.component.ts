@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 interface CartItem {
   id: number;
@@ -33,7 +34,7 @@ export class CartComponent implements OnInit {
 
   fetchCartItems() {
     if (!this.userId) return;
-    this.http.get<{cart: CartItem[], grand_total: number}>(`http://localhost:5000/carts?userId=${this.userId}`)
+    this.http.get<{cart: CartItem[], grand_total: number}>(`${environment.apiUrl}/carts?userId=${this.userId}`)
       .subscribe(res => {
         this.cartItems = res.cart;
         this.grandTotal = parseFloat(res.grand_total as any);
@@ -43,7 +44,7 @@ export class CartComponent implements OnInit {
   updateQuantity(item: CartItem, change: number) {
     const newQuantity = item.quantity + change;
     if (newQuantity < 1 || !this.userId) return;
-    this.http.put<{message: string}>(`http://localhost:5000/carts/${item.id}`, { quantity: newQuantity })
+    this.http.put<{message: string}>(`${environment.apiUrl}/carts/${item.id}`, { quantity: newQuantity })
       .subscribe(() => {
         this.fetchCartItems();
       });
@@ -51,7 +52,7 @@ export class CartComponent implements OnInit {
 
   removeItem(item: CartItem) {
     if (!this.userId) return;
-    this.http.delete<{message: string}>(`http://localhost:5000/carts/${item.id}`)
+    this.http.delete<{message: string}>(`${environment.apiUrl}/carts/${item.id}`)
       .subscribe(() => {
         this.fetchCartItems();
       });
@@ -63,7 +64,7 @@ export class CartComponent implements OnInit {
 
   placeOrder() {
     if (!this.userId) return;
-    this.http.post<{message: string, order_id: number}>(`http://localhost:5000/orders?userId=${this.userId}`, {})
+    this.http.post<{message: string, order_id: number}>(`${environment.apiUrl}/orders?userId=${this.userId}`, {})
       .subscribe(res => {
         this.orderPlaced = true;
         this.cartItems = [];
