@@ -33,7 +33,8 @@ export class MenuComponent implements OnInit {
     // Load user info from localStorage FIRST
     const userData = localStorage.getItem('user');
     if (userData) {
-      this.user = JSON.parse(userData);
+      this.user = JSON.parse(userData); // Now you can use this.user.id, this.user.name, etc.
+      console.log(this.user.id); // Log user id for debugging
     }
     // Now fetch menu items
     this.http.get<any>(`${environment.apiUrl}/menu-items`).subscribe(data => {
@@ -70,7 +71,7 @@ export class MenuComponent implements OnInit {
           this.showItemAdded = false;
         }, 1500);
       },
-      error: err => {
+      error: (err: any) => {
         alert('Failed to add to cart. Please try again.');
       }
     });
@@ -78,10 +79,10 @@ export class MenuComponent implements OnInit {
 
   getCartCount() {
     this.http.get<any>(`${environment.apiUrl}/cart/count?user_id=${this.user?.id || ''}`).subscribe({
-      next: res => {
-        this.cartCount = res.count;
+      next: (res: any) => {
+        this.cartCount = res && res.count !== undefined ? res.count : 0;
       },
-      error: err => {
+      error: (err: any) => {
         this.cartCount = 0;
       }
     });
